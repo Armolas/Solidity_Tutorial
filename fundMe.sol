@@ -2,7 +2,7 @@
 pragma solidity ^0.8.2;
 import { PriceConverter } from "./price_converter.sol";
 
-
+error UnauthorizedTransaction();
 contract FundMe {
     using PriceConverter for uint256;
 
@@ -35,7 +35,18 @@ contract FundMe {
     }
 
     modifier onlyOwner {
-        require(msg.sender == i_owner, "Sender is not contract owner");
+        // require(msg.sender == i_owner, "Sender is not contract owner");
+        if(msg.sender != i_owner){
+            revert UnauthorizedTransaction();
+        }
         _;
+    }
+
+    receive() external payable {
+        fund();
+    }
+
+    fallback() external payable {
+        fund();
     }
 }
